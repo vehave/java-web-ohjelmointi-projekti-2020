@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags">
+    <head>
+        <title th:text="${postaus.sisalto}">sisältö</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>
+        
+        
+    </head>
+    <body>
+        <div class="p-3 mb-2 bg-dark text-white">
+            <div class="row">
+                <div class="alert alert-success" role="alert" th:text="${tykatty}" th:if="${tykatty}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${virhetykkays2}" th:if="${virhetykkays2}"></div>
+                <div class="alert alert-success" role="alert" th:text="${kommenttisuccess}" th:if="${kommenttisuccess}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${kommenttierror}" th:if="${kommenttierror}"></div>
+            </div>
+            <div class="row">
+                <h1>AmmatillinenKvalifikaatioPoseSaitti</h1>
+                
+            </div>
+            
+        </div>
+        
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/etusivu/sivu/1}">Etusivu</a></li>
+                <li sec:authorize="!hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/login}">Kirjaudu sisään</a></li>
+                <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/logout}">Kirjaudu ulos</a></li>
+                <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/oma}">Oma profiili</a></li>
+            </ol>
+        </nav>
+            <br /><br />
+            <div class="container">   
+            <div class="row">
+                <div class="col-11">
+                    <h2 class="border border-info" th:text="${postaus.sisalto}">sisältö</h2>
+                </div>
+                <div class="col-1">
+                    <br /><br />
+                    <form sec:authorize="hasAuthority('USER')" method="POST" th:action="@{/etusivu/{id}/postaus/tykkaa(id=${postaus.id})}">
+                        
+                        <input class="btn btn-outline-danger" type="submit" value="Tykkää"/>
+                    </form>
+                </div>
+            </div>
+             
+            
+            <div class="row">
+                <div class="col-3">
+                    <h6> Lähettäjä: <a th:href="@{/profile/{lahettaja.merkkijono}(lahettaja.merkkijono=${postaus.lahettaja.merkkijono})}" th:text="${postaus.lahettaja.nimi}">postaajan nimi</a></h6>
+                </div>
+                <div class="col-3">
+                    <h6 th:text="'Lähetetty: '+${#temporals.format(postaus.lahetysaika, 'dd-MM-yyyy HH:mm')}">Lähetysaika</h6>
+                </div>
+                <div class="col-3">
+                    <h6 th:text="${postaus.kommentit}+' kommenttia'">kommentteja</h6>
+                    
+                </div>
+                <div class="col-3">
+                    <h6 th:text="${postaus.tykkaykset}+' tykkäystä'">tykkäyksiä></h6>
+                </div>
+              
+            </div>
+            </div>
+        
+        <br /><br />
+        <div class="p-3 mb-2 bg-dark text-white">
+            <div class="row">
+                <h4> Kommentit </h4>
+                
+            </div>
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item" th:each="alkio : ${sivut}">
+                        <a class="page-link" th:href="@{/etusivu/{id}/sivu/{n}(id=${postaus.id},n=${alkio})}">
+                            <span th:text="${alkio}">Sivunumero</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </nav>
+            <div class="row">
+              <table id="kommentit" class="table table-striped table-dark">
+                  <tr>
+                      <th scope="col">Lähetysaika</th>
+                      <th scope="col">Kommentti</th>
+                  </tr>
+                  <tr th:each="kommentti : ${page}">
+                      <td th:text="${#temporals.format(kommentti.lahetysaika, 'dd-MM-yyyy HH:mm')}">Lähetysaika</td>
+                      <td th:text="${kommentti.sisalto}">sisältö</td>
+                      
+                  </tr>
+              </table>
+            </div>
+            <nav aria-label="...">
+                <ul class="pagination pagination-sm">
+                    <li class="page-item" th:each="alkio : ${sivut}">
+                        <a class="page-link" th:href="@{/etusivu/{id}/sivu/{n}(id=${postaus.id},n=${alkio})}">
+                            <span th:text="${alkio}">Sivunumero</span>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </nav>
+            <div class="row">
+                
+                <form th:action="@{/etusivu/{id}/kommentoi(id=${postaus.id})}" method="POST">
+                    <h4> Lisää kommentti </h4>
+                    <textarea class="border border-danger" name="sisalto" rows="3" cols="30"></textarea>
+                    <input class="btn btn-outline-danger" type="submit" value="Kommentoi"/>
+                </form>
+            </div>
+        </div>  
+                
+    </body>
+</html>

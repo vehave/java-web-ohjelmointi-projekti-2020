@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags">
+    <head>
+        <title th:text="${profile.nimi}">nimi</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>       
+    </head>
+    <body>
+        <div class="p-3 mb-2 bg-dark text-white">
+            <div class="row">
+                
+                <div class="alert alert-success" role="alert" th:text="${kuvasuccess}" th:if="${kuvasuccess}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${kuvaerror}" th:if="${kuvaerror}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${nimierror}" th:if="${nimierror}"></div>
+                <div class="alert alert-success" role="alert" th:text="${lisattysuccess}" th:if="${lisattysuccess}"></div>
+                <div class="alert alert-success" role="alert" th:text="${poistettusuccess}" th:if="${poistettusuccess}"></div>
+                <div class="alert alert-success" role="alert" th:text="${poistosuccess}" th:if="${poistosuccess}"></div>
+                <div class="alert alert-success" role="alert" th:text="${hyvaksyttysuccess}" th:if="${hyvaksyttysuccess}"></div>
+                <div class="alert alert-success" role="alert" th:text="${hylattysuccess}" th:if="${hylattysuccess}"></div>
+                
+            </div>
+            
+            <div class="row">
+                <h1>AmmatillinenKvalifikaatioPoseSaitti</h1>
+                
+            </div>
+            
+        </div>
+        
+        <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/etusivu/sivu/1}">Etusivu</a></li>
+                    <li sec:authorize="!hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/login}">Kirjaudu sisään</a></li>
+                    <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/logout}">Kirjaudu ulos</a></li>
+                    <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item active">Oma profiili</li>
+                </ol>
+        </nav>
+            <br /><br />
+        <div class="container">
+            <div class="row">
+                <h1 th:text="${profile.nimi}"> nimi</h1>
+            </div>
+            <br /><br />
+            <div class="row"> 
+                <img th:src="@{/profile/{profile.merkkijono}/kuva(profile.merkkijono=${profile.merkkijono})}"/>
+                 <br />
+                <form method="POST" th:action="@{/profile/{profile.merkkijono}/lisaakuva(profile.merkkijono=${profile.merkkijono})}" enctype="multipart/form-data">
+                    
+                    <input type="file" name="file" id="file"/>
+                    <input class="btn btn-outline-danger" type="submit" value="Lisää/päivitä profiilikuva"/>
+                </form>
+                
+            </div> 
+        </div> 
+        
+            
+            <br /><br />
+            <div class="p-3 mb-2 bg-dark text-white">
+            <div class="row">
+                <div class="col-6">
+                    <h4> Top 3 - taidot </h4>
+                <table class="table table-striped table-dark">
+                     <tr>
+                        <th scope="col">Taito</th>
+                        <th scope="col">Kehuja</th>
+                        <th> </th>
+                  </tr>
+                     <tr th:each="taito : ${top3}">
+                            <td th:text="${taito.nimi}">postaajan nimi</td>
+                            <td th:text="${taito.kehut}"> kehua</td>
+                            <td> <form method="POST" th:action="@{/profile/{profile.merkkijono}/taito/{id}/poista(profile.merkkijono=${profile.merkkijono},id=${taito.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Poista"/>
+                                </form>
+                            </td>
+                     </tr>
+                 </table>
+                </div>
+                <div class="col-6">
+                    <h4> Muut taidot </h4>
+                 
+                 <table class="table table-striped table-dark">
+                     <tr>
+                        <th scope="col">Taito</th>
+                        <th scope="col">Kehuja</th>
+                        <th> </th>
+                  </tr>
+                     <tr th:each="taito : ${muut}">
+                            <td th:text="${taito.nimi}">postaajan nimi</td>
+                            <td th:text="${taito.kehut}"> kehua</td>
+                            <td> <form method="POST" th:action="@{/profile/{profile.merkkijono}/taito/{id}/poista(profile.merkkijono=${profile.merkkijono},id=${taito.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Poista"/>
+                                </form>
+                            </td>
+                     </tr>
+                 </table>
+                 <form method="POST" th:action="@{/profile/{profile.merkkijono}/taito/lisaa(profile.merkkijono=${profile.merkkijono})}">
+                                <input class="border border-danger" type="text" name="nimi"/>
+                                <input class="btn btn-outline-danger" type="submit" value="Lisää taito"/>
+                                </form>
+                </div>
+            </div>
+            <br /><br />
+            
+            <div class="row"> 
+                <div class="col-6">
+                    <h4> Yhteydet </h4>
+                    
+                    <table class="table table-striped table-dark">
+                     <tr th:each="yhteydet : ${profile.yhteydet}">
+                          <td> <a th:href="@{/profile/{yhteydet.merkkijono}(yhteydet.merkkijono=${yhteydet.merkkijono})}" th:text="${yhteydet.nimi}">yhteys</a></td>
+                          <td> <form method="POST" th:action="@{/profile/{profile.merkkijono}/yhteydet/{id}/poista(profile.merkkijono=${profile.merkkijono},id=${yhteydet.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Poista"/>
+                                </form>
+                            </td>
+                     </tr>
+                    </table>
+                </div>
+                <div class="col-6">
+                    <h4> Hyväksyttävät yhteydet </h4>
+                    
+                    <table class="table table-striped table-dark">
+                     <tr th:each="hyvaksyttavat : ${profile.hyvaksyttavat}">
+                          <td> <a th:href="@{/profile/{hyvaksyttavat.merkkijono}(hyvaksyttavat.merkkijono=${hyvaksyttavat.merkkijono})}" th:text="${hyvaksyttavat.nimi}">Hyväksyttävä</a></td>
+                          <td> <form method="POST" th:action="@{/profile/{profile.merkkijono}/hyvaksyttavat/{id}/hyvaksy(profile.merkkijono=${profile.merkkijono},id=${hyvaksyttavat.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Hyväksy"/>
+                                </form>
+                            </td>
+                          <td> <form method="POST" th:action="@{/profile/{profile.merkkijono}/hyvaksyttavat/{id}/hylkaa(profile.merkkijono=${profile.merkkijono},id=${hyvaksyttavat.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Hylkää"/>
+                                </form>
+                            </td>
+                     </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

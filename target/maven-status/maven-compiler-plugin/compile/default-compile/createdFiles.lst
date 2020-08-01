@@ -1,0 +1,9 @@
+projekti\HomeController.class
+projekti\PostausRepository.class
+projekti\DevelopmentSecurityConfiguration.class
+projekti\MyApplication.class
+projekti\Postaus.class
+projekti\CustomUserDetailsService.class
+projekti\Profile.class
+projekti\ProfileRepository.class
+projekti\DefaultController.class

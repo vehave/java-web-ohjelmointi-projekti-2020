@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.springframework.org/security/tags">
+    <head>
+        <title th:text="${profile.nimi}">nimi</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"/>       
+    </head>
+    <body>
+        
+        
+        <div class="p-3 mb-2 bg-dark text-white">
+            <div class="row">
+                <div class="alert alert-success" role="alert" th:text="${yhteyslisatty}" th:if="${yhteyslisatty}"></div>
+                <div class="alert alert-success" role="alert" th:text="${yhteyssuccess}" th:if="${yhteyssuccess}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${yhteyserror}" th:if="${yhteyserror}"></div>
+                <div class="alert alert-success" role="alert" th:text="${taitosuccess}" th:if="${taitosuccess}"></div>
+                <div class="alert alert-danger" role="alert" th:text="${taitoerror}" th:if="${taitoerror}"></div>
+            </div>
+            <div class="row">
+                <h1>AmmatillinenKvalifikaatioPoseSaitti</h1>
+                
+            </div>
+            
+        </div>
+        
+        <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/etusivu/sivu/1}">Etusivu</a></li>
+                    <li sec:authorize="!hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/login}">Kirjaudu sisään</a></li>
+                    <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/logout}">Kirjaudu ulos</a></li>
+                    <li sec:authorize="hasAuthority('USER')" class="breadcrumb-item"><a th:href="@{/oma}">Oma profiili</a></li>
+                </ol>
+        </nav>
+            <br /><br />
+        <div class="container">
+            <div class="row">
+                <h1 th:text="${profile.nimi}"> nimi</h1>
+            </div>
+            <br /><br />
+            <div class="row"> 
+              
+                <img th:src="@{/profile/{profile.merkkijono}/kuva(profile.merkkijono=${profile.merkkijono})}"/>
+                <br/><br/>
+                <form sec:authorize="hasAuthority('USER')" method="POST" th:action="@{/profile/{profile.merkkijono}/pyyda(profile.merkkijono=${profile.merkkijono})}" enctype="multipart/form-data">
+                    
+                    <input class="btn btn-outline-danger" type="submit" value="Pyydä yhteys"/>
+                </form>
+                
+            </div>
+        </div>
+        <br /><br />
+        <div class="p-3 mb-2 bg-dark text-white">  
+             <div class="row"> 
+                 <div class="col-6">
+                     <h4> Top 3 - taidot </h4>
+                 
+                 <table class="table table-striped table-dark">
+                     <tr>
+                        <th scope="col">Taito</th>
+                        <th scope="col">Kehuja</th>
+                        <th sec:authorize="hasAuthority('USER')"> </th>
+                  </tr>
+                     <tr th:each="taito : ${top3}">
+                            <td th:text="${taito.nimi}">postaajan nimi</td>
+                            <td th:text="${taito.kehut}"> kehua</td>
+                            <td sec:authorize="hasAuthority('USER')"> <form method="POST" th:action="@{/profile/{profile.merkkijono}/taito/{id}(profile.merkkijono=${profile.merkkijono},id=${taito.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Kehu"/>
+                                </form>
+                            </td>
+                     </tr>
+                 </table>
+                 </div>
+                 <div class="col-6">
+                    <h4> Muut taidot </h4>
+                 
+                 <table class="table table-striped table-dark">
+                     <tr>
+                        <th scope="col">Taito</th>
+                        <th scope="col">Kehuja</th>
+                        <th sec:authorize="hasAuthority('USER')"> </th>
+                  </tr>
+                     <tr th:each="taito : ${muut}">
+                            <td th:text="${taito.nimi}">postaajan nimi</td>
+                            <td th:text="${taito.kehut}"> kehua</td>
+                            <td sec:authorize="hasAuthority('USER')"> <form method="POST" th:action="@{/profile/{profile.merkkijono}/taito/{id}(profile.merkkijono=${profile.merkkijono},id=${taito.id})}">
+                        
+                                <input class="btn btn-outline-danger" type="submit" value="Kehu"/>
+                                </form>
+                            </td>
+                     </tr>
+                 </table> 
+                 </div>
+                 
+             </div>
+            <br /><br />
+            <div class="row"> 
+                
+                    <h4> Yhteydet </h4>
+                    <table class="table table-striped table-dark">
+                     <tr th:each="yhteydet : ${profile.yhteydet}">
+                         <td> <a th:href="@{/profile/{yhteydet.merkkijono}(yhteydet.merkkijono=${yhteydet.merkkijono})}" th:text="${yhteydet.nimi}">yhteys</a></td>
+                     </tr>
+                    </table>
+                
+                
+            </div>
+        </div>
+    </body>
+</html>
